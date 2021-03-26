@@ -1,0 +1,110 @@
+<!-- rendering the cart -->
+<div class="cart-container">
+
+  {% if cart.item_count > 0 %}
+  <h1 class="cart-title">Your Cart</h1>
+
+  <form class="cart-form" action="/cart" method="post" novalidate>
+    <div class="cart-item-list">
+
+      {% for item in cart.items %}
+
+
+
+      <div class="cart-item">
+
+
+        <div class="item-img-container">
+          <a href="{{ item.url | within: collections.all }}">
+            <img src="{{ item | img_url: 'large' }}" alt="{{ item.title | escape }}">
+          </a>
+        </div>
+        <div class="item-info-container">
+          <h1 class="item-title info-row">{{ item.product.title }} &nbsp; &nbsp; &nbsp; &nbsp;<a class="remove"
+              href="/cart/change?line={{ forloop.index }}&amp;quantity=0"><i class="far fa-trash-alt"></i></a>
+          </h1>
+          <div class="info-row-container">
+            <h1 class="info-row">Size/Color:</h1>
+            <h1 class="info-row">{{ item.variant.title }}</h1>
+
+          </div>
+          <div class="info-row-container">
+            <h1 class="info-row">Quantity:</h1>
+            <div class="info-row">
+              <input class="qty-input" type="number" name="updates[]" id="updates_{{ item.key }}"
+                value="{{ item.quantity }}" min="0" data-item_id="{{item.id}}" data-item_price="{{item.price}}">
+            </div>
+
+          </div>
+          <div class="info-row-container">
+            <h1 class="info-row">Price:</h1>
+            <h1 class="info-row item-price {{item.id}}">{{ item.price | times:item.quantity | money }}</h1>
+          </div>
+
+
+
+
+          {% if item.original_line_price != item.line_price %}{{ item.original_line_price | money }} {{ item.line_price
+          | money }}{% endif %}
+
+          {% for discount in item.discounts %}{{ discount.title }}{% endfor %}
+
+
+        </div>
+
+
+      </div>
+      {% endfor %}
+
+
+
+
+    </div>
+    <p class="sub-total">Sub Total : {{ cart.total_price | money }}</p>
+
+    <button class="checkout" type="submit" name="checkout">Checkout</button>
+  </form>
+
+
+  {% else %}
+
+  Cart is empty
+  {% endif %}
+
+
+</div>
+
+
+<script>
+//adjust price totals after change in quantity
+
+  $(document).ready(function () {
+
+    $(".qty-input").on("change", function () {
+      itemId = $(this).data("item_id")
+      itemPrice = parseInt($(this).data("item_price")) / 100
+      itemQuantity = parseInt($(this).val())
+
+      $("." + itemId).text("$" + Math.round(itemQuantity * itemPrice * 100) / 100)
+
+      var totalPrice = 0.0
+      item = $(".item-price")
+
+      for (i = 0; i < item.length; i++) {
+
+        itemPrice = parseFloat(item[i].textContent.substring(1))
+        console.log(itemPrice)
+
+        totalPrice += itemPrice
+      }
+      $(".sub-total").text("Sub Total : $" + Math.round(totalPrice * 100) / 100)
+
+    })
+  })
+
+</script>
+
+
+
+
+

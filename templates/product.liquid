@@ -1,0 +1,108 @@
+{% assign current_variant = product.selected_or_first_available_variant %}
+{% assign featured_image = current_variant.featured_image | default: product.featured_image %}
+
+<div class="product-page-container">
+<div class="img-section">
+  <div class="img-preview">
+    <img src="{{ featured_image | img_url: 'large' }}" alt="{{ featured_image.alt | escape }}" id="ProductPhotoImg">
+
+  </div>
+  <div class="img-selection">
+    <div class="wrap">
+      {% for image in product.images %}
+      
+  {%if image.alt == current_variant.option1%}
+
+  <a id="thumbnail{{forloop.index}}" class="thumbnail {{image.alt}}" href="{{ image.src | img_url: 'large' }}" data-color="{{image.alt}}" data-imgsrc="{{ image.src | img_url: 'large' }}">
+    <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+  </a>
+  {% else %}
+  <a class="thumbnail hiden {{image.alt}}" href="{{ image.src | img_url: 'large' }}" data-color="{{image.alt}}" data-imgsrc="{{ image.src | img_url: 'large' }}">
+    <img src="{{ image.src | img_url: 'compact' }}" alt="{{ image.alt | escape }}">
+  </a>
+  {% endif %}
+{% endfor %}
+    </div>
+  </div>
+</div>
+<div class="product-info">
+  <h1 class="product-page-title">{{ product.title }}</h1>
+  <div class="product-description">{{ product.description }}</div>
+  <form action="/cart/add" method="post">
+    <div id="product-variants">
+      <div id="product-price"></div>
+      <select id="product-select" name="id">
+        {% for variant in product.variants %}
+        <option value="{{ variant.id }}"
+          >{{ variant.title }} - {{ variant.price | money }}</option
+        >
+        {% endfor %}
+      </select>
+    </div>
+    <input
+      type="submit"
+      name="add"
+      value="Add to Cart"
+      id="add-to-cart"
+      class="enabled"
+    />
+  </form>
+  <script>
+
+$(document).ready(function(){
+  // define the call back function for the option selector helper
+    var onVariantSelected =function(variant,selector){
+     //update price display.
+     var formattedPrice = Shopify.formatMoney(variant.price,"");
+     $("#product-price").text(formattedPrice)
+     // enable and disable add-to-cart button on variant availability 
+    if(!variant.available){
+     $("#add-to-cart").attr("class","disabled")
+     $("#add-to-cart").attr("disabled","disabled")
+     $("#add-to-cart").attr("value","Out of Order")
+
+    }
+    else
+    {
+      $("#add-to-cart").attr("class","enabled");
+      $("#add-to-cart").attr("disabled",null);
+      $("#add-to-cart").attr("value","Add to Cart")
+
+    }
+    // updating featured image
+    
+    
+      $("#ProductPhotoImg").attr("src",variant.featured_image.src);
+      $(".thumbnail").css("display","none")
+      $("."+variant.option1).css("display","block")
+
+
+    };
+    // instantiate Shopify.OptionSelectors
+  new Shopify.OptionSelectors("product-select", { product :{{ product | json }}, onVariantSelected: onVariantSelected ,enableHistoryState: true});
+
+  $(".thumbnail").on("click",function(e){
+
+    e.preventDefault()
+    $(".thumbnail").css("opacity",".5")
+    $(".thumbnail").css("filter","drop-shadow(0px 0px 0px white)")
+    $(this).css("opacity","1")
+    $(this).css("filter","drop-shadow(2px 4px 6px darkgrey)")
+    imageSrc=$(this).data("imgsrc")
+    $("#ProductPhotoImg").attr("src",imageSrc);
+  })
+})
+  </script>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+

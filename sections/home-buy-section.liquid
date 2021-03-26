@@ -1,0 +1,63 @@
+
+{%assign c = collections[section.settings.collection].products%}
+{%assign colUrl = collections[section.settings.collection].url%}
+{%assign title = collections[section.settings.collection].title%}
+<h1 class="section-title">{{title}}</h1>
+
+<div class="buy-section">
+{% for product in c  limit:4%}
+  <div class="product">
+    <div class="product-image">
+    <a href="{{ product.url | within: collection }}">
+      <img src="{{ product.featured_image.src | img_url: 'medium' }}" alt="{{ product.featured_image.alt | escape }}">
+    </a>
+  </div>
+  <div class="product-description">
+    <a href="{{ product.url | within: collection }}">{{ product.title }}</a>&nbsp;<p class="item-price"> {{ product.price | money }}</p>
+     
+    {% if product.available %}<a href="/cart" class="add-item">Add item</a>
+    {% else %}
+    <p class="sold-out">Sold Out</p>
+    {% endif %}
+  </div>
+  </div>
+  {% endfor %}
+</div>
+<a class="see-all" href="{{colUrl}}">See All</a>
+<hr class="line-separator">
+
+
+
+
+{% schema %}
+{
+    "name":"collection-section",
+    "settings": [
+    {
+        "id":"collection",
+        "type":"collection",
+        "label":"collection"
+    }
+    
+    ],
+
+    "presets": [
+    {
+    "name": "buy section",
+    "category": "Call to Action"
+    }
+    ]
+}
+
+{% endschema %}
+
+{% stylesheet %}
+
+
+{% endstylesheet %}
+
+
+{% javascript %}
+
+
+{% endjavascript %}

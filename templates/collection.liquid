@@ -1,0 +1,100 @@
+<!-- group tags by filter categories  -->
+{% assign seasons = "summer,winter" | split: ',' %}
+{% assign gender = "Men,Women" | split: ',' %}
+
+<div class="collection-container">
+
+  <!-- filter dropdown selection -->
+    <div class="clearfix filter-container">
+    <div class="filter">
+      <p class="filter-title">Filter By :</p>
+      <br>
+      <p class="filter-title">Seasons</p>
+      <select class="coll-filter">
+        <option value="">All</option>
+        {% for tag in collection.all_tags %} {% if current_tags contains tag and seasons contains tag %}
+        <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+        {% elsif seasons contains tag %}
+        <option value="{{ tag | handle }}">{{ tag }}</option>
+        {% endif %} {% endfor %}
+      </select>
+
+      <p class="filter-title">Gender</p>
+      <select class="coll-filter">
+        <option value="">All</option>
+        {% for tag in collection.all_tags %} {% if current_tags contains tag and gender contains tag %}
+        <option value="{{ tag | handle }}" selected>{{ tag }}</option>
+        {% elsif gender contains tag %}
+        <option value="{{ tag | handle }}">{{ tag }}</option>
+        {% endif %} {% endfor %}
+      </select>
+    </div>
+  </div>
+  <!-- code for collection rendering -->
+  <div class="collection-render">
+    <h1 class="section-title">{{collection.title}}</h1>
+    <div class="buy-section">
+      {% for product in collection.products%}
+      <div class="product">
+        <div class="product-image">
+          <a href="{{ product.url | within: collection }}">
+            <img src="{{ product.featured_image.src | img_url: 'medium' }}"
+              alt="{{ product.featured_image.alt | escape }}">
+          </a>
+        </div>
+        <div class="product-description">
+          <a href="{{ product.url | within: collection }}">{{ product.title }}</a>&nbsp;<p class="item-price"> {{
+            product.price | money }}</p>
+
+          {% if product.available %}<a href="/cart" class="add-item">Add item</a>
+          {% else %}
+          <p class="sold-out">Sold Out</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+
+  /* Product Tag Filters  */
+  const collFilters = document.querySelectorAll('.coll-filter');
+  console.log(collFilters[0])
+
+  if (collFilters.length > 0) {
+    collFilters.forEach((collFilter) => {
+      collFilter.addEventListener('change', function () {
+        var newTags = [];
+        collFilters.forEach((collFilter) => {
+          for (var i = 0; i <= collFilter.length - 1; i++) {
+            if (collFilter[i].selected == true && collFilter[i].value != "") {
+              newTags.push(collFilter[i].value);
+            }
+          }
+        });
+
+        if (newTags.length) {
+          var query = newTags.join('+');
+          window.location.href = '/collections/{{ collection.handle }}/' + query;
+        }
+        else {
+          {% if collection.handle %}
+          window.location.href = '/collections/{{ collection.handle }}';
+          {% elsif collection.products.first.type == collection.title %}
+          window.location.href = '{{ collection.title | url_for_type }}';
+          {% elsif collection.products.first.vendor == collection.title %}
+          window.location.href = '{{ collection.title | url_for_vendor }}';
+          {% endif %}
+        }
+      });
+    });
+  }
+</script>
+
+
+
+

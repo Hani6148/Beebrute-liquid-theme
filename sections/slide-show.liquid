@@ -1,0 +1,125 @@
+<div class="slideshow-container">
+
+    <div class="mySlides fade">
+      
+      {{ section.settings.img1 | img_url: 'master' | img_tag:"alt","slide-img" }}
+      
+    </div>
+    
+    <div class="mySlides fade">
+      
+      {{ section.settings.img2 | img_url: 'master' | img_tag:"alt","slide-img" }}
+      
+    </div>
+    
+    <div class="mySlides fade">
+      
+      {{ section.settings.img3 | img_url: 'master' |img_tag:"alt","slide-img" }}
+      
+    </div>
+    
+    <a class="prev">&#10094;</a>
+    <a class="next">&#10095;</a>
+    <br>
+    
+    <div style="text-align:center">
+      <span id="dot1" class="dot" ></span> 
+      <span id="dot2" class="dot" ></span> 
+      <span id="dot3" class="dot" ></span> 
+    </div>
+
+    
+    </div>
+   
+{% schema %}
+{
+  "name":"carrousel-section",
+  "settings": [
+  {
+    "type": "image_picker",
+    "id": "img1",
+    "label": "Image1"    
+  },
+  {
+    "type": "image_picker",
+    "id": "img2",
+    "label": "Image2"    
+  },
+  {
+    "type": "image_picker",
+    "id": "img3",
+    "label": "Image3"    
+  }
+  
+  ],
+
+  "presets": [
+  {
+  "name": "caroussel",
+  "category": "Call to Action"
+  }
+  ]
+}
+{% endschema %}
+{% stylesheet %}
+
+
+
+
+
+
+{% endstylesheet %}
+{% javascript %}
+var slideIndex = 1;
+
+$(".next").on("click",function(){
+    plusSlides(1)
+})
+
+$(".prev").on("click",function(){
+    plusSlides(-1)
+})
+
+$("#dot1").on("click",function(){
+  currentSlide(1)
+})
+$("#dot2").on("click",function(){
+  currentSlide(2)
+})
+$("#dot3").on("click",function(){
+  currentSlide(3)
+})
+
+
+showSlides(slideIndex);
+
+
+
+function plusSlides(n) {
+  showSlides(slideIndex += n);
+ 
+}
+
+function currentSlide(n) {
+  showSlides(slideIndex = n);
+}
+
+function showSlides(n) {
+  var i;
+  var slides = document.getElementsByClassName("mySlides");
+  var dots = document.getElementsByClassName("dot");
+  if (n > slides.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = slides.length}
+  for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+  }
+  for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+  }
+  slides[slideIndex-1].style.display = "block";  
+  dots[slideIndex-1].className += " active";
+}
+
+
+
+{% endjavascript %}

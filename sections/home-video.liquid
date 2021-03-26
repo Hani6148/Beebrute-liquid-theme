@@ -1,0 +1,42 @@
+<div autoplay muted loop id="myVideo">
+    {{ section.settings.home-video | img_url: 'master' | img_tag:"alt","slide-img" }}
+
+</div>
+
+
+
+
+
+{% schema %}
+{
+    "name":"home-video",
+    "settings": [
+    {
+        "id":"home-video",
+        "type":"image_picker",
+        "label":"home-video"
+    }
+    
+    ],
+
+    "presets": [
+    {
+    "name": "home-video",
+    "category": "Call to Action"
+    }
+    ]
+}
+
+{% endschema %}
+
+
+{% stylesheet %}
+
+}
+
+{% endstylesheet %}
+
+
+{% javascript %}
+
+{% endjavascript %}
